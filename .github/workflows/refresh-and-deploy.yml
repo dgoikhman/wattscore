@@ -42,9 +42,9 @@ jobs:
         run: |
           git config user.name "ws-bot"; git config user.email "bot@users.noreply.github.com"
           git add -f data/last_refresh.log data/leads.csv data/substations.csv 2>/dev/null || true
-          git diff --cached --quiet || git commit -m "data: weekly refresh [skip ci]"
-          git pull --rebase origin main || true
-          git push origin main || echo "DATASET PUSH FAILED — data not persisted"
+          if git diff --cached --quiet; then echo "no data changes"; exit 0; fi
+          git commit -m "data: refresh [skip ci]"
+          git push origin HEAD:main || (git fetch origin && git rebase origin/main && git push origin HEAD:main)
   deploy:
     needs: build
     runs-on: ubuntu-latest
