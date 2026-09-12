@@ -123,4 +123,14 @@ def main():
     print(f"[done] {len(leads)} scored closure leads ({hot} rated 70+) -> data/leads.csv; contacts in data/pro/ (gitignored)")
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit:
+        raise
+    except BaseException:
+        import traceback
+        tb = traceback.format_exc()
+        print(tb)
+        with open(os.path.join(ROOT, "data", "last_refresh.log"), "a") as f:
+            f.write("\n[warn CRASH]\n" + tb)
+        sys.exit(1)
