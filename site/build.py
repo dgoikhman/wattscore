@@ -43,9 +43,10 @@ INDEX = """
 <p>When an industrial facility announces closure, its power infrastructure goes on sale — usually years before anyone lists it that way. We read the public closure filings, score every site's data-center potential, and hand you the lead before the market reprices it.</p>
 <div><span class="stat"><b>{{ n }}</b> live closure leads</span><span class="stat"><b>{{ hot }}</b> rated 70+</span><span class="stat"><b>{{ subs }}</b> substations mapped</span><span class="stat">TX · OH · MI</span></div></div>
 <h2>This week's board <span class="lock">— identities locked</span></h2>
-<table><tr><th>Watt</th><th>Signal</th><th class="n">Scale</th><th>State</th></tr>
+{% if not teaser %}<p class="card">The first live sweep is running — the board populates within the hour.</p>{% endif %}
+{% if teaser %}<table><tr><th>Watt</th><th>Signal</th><th class="n">Scale</th><th>State</th></tr>
 {% for l in teaser %}<tr><td><span class="chip">{{ l.watt }}</span></td><td>{{ "Industrial closure" if l.industrial == "Y" else "Facility closure" }} · {{ l.city or "city withheld" }}</td><td class="n">{{ l.employees }} jobs</td><td>{{ l.state }}</td></tr>
-{% endfor %}</table>
+{% endfor %}</table>{% endif %}
 <div class="card"><b>The full board unlocks company names, addresses-of-record, filing details, and the outbound contact sheet</b> — refreshed weekly, delivered as a feed plus a CSV your outreach team can load directly. Founding seats: <b>$2,490/yr, 20 seats</b>. <p style="margin-top:8px"><a class="cta" href="mailto:dan@brrrrmarkets.com?subject=Watt%20Score%20founding%20seat">Request a founding seat</a></p></div>
 <h2>Why closures</h2>
 <p>Interconnection queues run 4-7 years. A shuttered plant already has industrial electrical service, water, fiber that followed the industry, and a motivated seller. Everyone bids the farmland next to the substation; the smarter trade is the building that already drew the load. WARN filings announce exactly these sites, publicly, with a contact attached — weeks before brokers circle.</p>"""
@@ -70,7 +71,9 @@ def page(path, title, desc, body, noindex=False):
     open(os.path.join(d or OUT, "index.html"), "w").write(html)
 
 def main():
-    leads = list(csv.DictReader(open(os.path.join(ROOT, "data", "leads.csv"))))
+    lp = os.path.join(ROOT, "data", "leads.csv")
+    leads = [l for l in (csv.DictReader(open(lp)) if os.path.exists(lp) else [])
+             if "fixture" not in l.get("source", "")]
     subs = sum(1 for _ in open(os.path.join(ROOT, "data", "substations.csv"))) - 1 \
         if os.path.exists(os.path.join(ROOT, "data", "substations.csv")) else 0
     hot = sum(1 for l in leads if int(l["watt"]) >= 70)

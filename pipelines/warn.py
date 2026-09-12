@@ -12,13 +12,11 @@ import requests
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HDRS = {"User-Agent": "Mozilla/5.0 (WattScore research; public records)"}
+# TX: official Socrata open-data API (structured, stable). More states join
+# via agent research — never via guessed URLs again.
+SOCRATA = {"TX": "https://data.texas.gov/resource/8w53-c4f6.json"}
 SOURCES = {
-    "TX": ["https://www.twc.texas.gov/data-reports/warn-act-listings",
-           "https://www.twc.texas.gov/news/warn-act-listings"],
-    "OH": ["https://jfs.ohio.gov/job-services-and-unemployment/job-services/warn/current-warn-notices",
-           "https://jfs.ohio.gov/warn/current.stm"],
-    "MI": ["https://www.michigan.gov/leo/bureaus-agencies/wd/warn-notices",
-           "https://milmi.org/warn"],
+    "TX": ["https://www.twc.texas.gov/sites/default/files/oei/docs/warn-act-listings-2026-twc.xlsx"],
 }
 IND_HOT = re.compile(r"manufactur|steel|alumin|paper|mill|plastic|chemical|distribut|"
                      r"warehouse|logistic|assembl|foundry|machin|print|textile|food|"
@@ -47,14 +45,25 @@ def watt_score(employees, industrial):
 def main():
     local = os.environ.get("WS_LOCAL")
     leads, pro = [], []
-    for st, urls in SOURCES.items():
+    for st in set(list(SOCRATA) + list(SOURCES)):
+        urls = SOURCES.get(st, [])
         df, src = None, ""
-        if local:
+        if not local and st in SOCRATA:
+            try:
+                import pandas as pd
+                r = requests.get(SOCRATA[st], params={"$limit": "3000",
+                    "$order": ":id DESC"}, headers=HDRS, timeout=90)
+                r.raise_for_status()
+                df, src = pd.DataFrame(r.json()), SOCRATA[st]
+                print(f"[warn:{st}] Socrata API: {len(df)} rows")
+            except Exception as e:
+                print(f"[warn:{st}] socrata -> {type(e).__name__}: {str(e)[:90]}")
+        if df is None and local:
             p = os.path.join(local, f"warn_{st.lower()}.csv")
             if os.path.exists(p):
                 import pandas as pd
                 df, src = pd.read_csv(p), f"fixture:{st}"
-        else:
+        elif df is None:
             for u in urls:
                 try:
                     df, src = read_tables(u)
@@ -69,6 +78,18 @@ def main():
         c_city = col(df, "city", "location", "address")
         c_n = col(df, "affected", "employees", "workers", "number", "total", "laid")
         c_contact = col(df, "contact", "official", "representative")
+        c_date = col(df, "notice_date", "date_received", "warn_date", "date")
+        if c_date is not None:
+            try:
+                import pandas as pd
+                df["_d"] = pd.to_datetime(df[c_date], errors="coerce")
+                cutoff = pd.Timestamp.now() - pd.Timedelta(days=270)
+                recent = df[df["_d"] >= cutoff]
+                if len(recent) >= 10:
+                    df = recent
+                print(f"[warn:{st}] {len(df)} notices within 9 months")
+            except Exception:
+                pass
         if not c_co:
             print(f"[warn:{st}] no company column in parsed table — repair needed")
             continue
