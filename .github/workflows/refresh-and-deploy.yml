@@ -39,6 +39,21 @@ jobs:
         env:
           WS_MEMBERS_TOKEN: ${{ secrets.WS_MEMBERS_TOKEN }}
         run: python site/build.py --base-url "${{ vars.BASE_URL || 'https://dgoikhman.github.io/wattscore' }}"
+      - name: Diag snapshot (workspace truth to diag branch)
+        if: github.event_name != 'push'
+        run: |
+          git config user.name "ws-diag"; git config user.email "bot@users.noreply.github.com"
+          echo "workspace at $(date -u):" > data/DIAG.txt
+          ls -la data/ >> data/DIAG.txt
+          echo "--- log head ---" >> data/DIAG.txt; head -5 data/last_refresh.log >> data/DIAG.txt 2>&1
+          echo "--- log wc ---" >> data/DIAG.txt; wc -l data/last_refresh.log >> data/DIAG.txt 2>&1
+          echo "--- git status ---" >> data/DIAG.txt; git status --short >> data/DIAG.txt
+          echo "--- head commit ---" >> data/DIAG.txt; git log --oneline -2 >> data/DIAG.txt
+          git checkout -B diag
+          git add -f data/ || true
+          git commit -m "diag snapshot" || true
+          git push -f origin diag || echo "diag push failed"
+          git checkout -
       - uses: actions/upload-pages-artifact@v3
         with: { path: out }
       - name: Commit refreshed public data
