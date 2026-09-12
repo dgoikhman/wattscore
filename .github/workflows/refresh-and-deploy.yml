@@ -1,0 +1,55 @@
+name: Refresh data and deploy site
+on:
+  schedule:
+    - cron: "0 12 * * 1"     # weekly, Mondays
+  workflow_dispatch:
+  push:
+    branches: [main]
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: false
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r requirements.txt
+      - name: Refresh substations (non-fatal)
+        if: github.event_name != 'push'
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          python pipelines/substations.py 2>&1 | tee data/last_refresh.log
+      - name: Refresh WARN closure leads (non-fatal)
+        if: github.event_name != 'push'
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          python pipelines/warn.py 2>&1 | tee -a data/last_refresh.log
+      - name: Build site
+        env:
+          WS_MEMBERS_TOKEN: ${{ secrets.WS_MEMBERS_TOKEN }}
+        run: python site/build.py --base-url "${{ vars.BASE_URL || 'https://dgoikhman.github.io/wattscore' }}"
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: out }
+      - name: Commit refreshed public data
+        run: |
+          git config user.name "ws-bot"; git config user.email "bot@users.noreply.github.com"
+          git add -f data/last_refresh.log data/leads.csv data/substations.csv 2>/dev/null || true
+          git diff --cached --quiet || git commit -m "data: weekly refresh [skip ci]"
+          git push || true
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
