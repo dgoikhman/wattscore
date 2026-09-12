@@ -15,6 +15,7 @@ HDRS = {"User-Agent": "Mozilla/5.0 (WattScore research; public records)"}
 # TX: official Socrata open-data API (structured, stable). More states join
 # via agent research — never via guessed URLs again.
 SOCRATA = {"TX": "https://data.texas.gov/resource/8w53-c4f6.json"}
+SOCRATA = {"TX": "https://data.texas.gov/resource/8w53-c4f6.json"}
 SOURCES = {
     "TX": ["https://www.twc.texas.gov/sites/default/files/oei/docs/warn-act-listings-2026-twc.xlsx"],
 }
