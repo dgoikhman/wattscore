@@ -57,12 +57,15 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with: { path: out }
       - name: Commit refreshed public data
+        if: github.event_name != 'push'
         run: |
           git config user.name "ws-bot"; git config user.email "bot@users.noreply.github.com"
+          git fetch origin main
+          git checkout -B _data
           git add -f data/last_refresh.log data/leads.csv data/substations.csv 2>/dev/null || true
           if git diff --cached --quiet; then echo "no data changes"; exit 0; fi
           git commit -m "data: refresh [skip ci]"
-          git push origin HEAD:main || (git fetch origin && git rebase origin/main && git push origin HEAD:main)
+          git push origin _data:main || { echo "DATASET PUSH FAILED"; exit 1; }
   deploy:
     needs: build
     runs-on: ubuntu-latest

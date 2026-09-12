@@ -75,8 +75,10 @@ def main():
         if df is None or not len(df):
             print(f"[warn:{st}] NO PARSE — repair-agent attention needed")
             continue
-        c_co = col(df, "company", "employer", "business")
-        c_city = col(df, "city", "location", "address")
+        print(f"[warn:{st}] columns: {list(df.columns)}")
+        c_co = col(df, "company", "employer", "business", "job_site", "site_name",
+                   "establishment", "firm", "entity", "organization")
+        c_city = col(df, "city", "location", "address", "town", "site_city")
         c_n = col(df, "affected", "employees", "workers", "number", "total", "laid")
         c_contact = col(df, "contact", "official", "representative")
         c_date = col(df, "notice_date", "date_received", "warn_date", "date")
