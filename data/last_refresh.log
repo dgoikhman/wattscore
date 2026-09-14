@@ -1,14 +1,9 @@
-[substations] US-TX: 6156
-[substations] US-OH: 3130
-[substations] US-MI: 2873
-[done] 12159 substations -> /home/runner/work/wattscore/wattscore/data/substations.csv
-[warn:TX] https://www.twc.texas.gov/data-reports/warn-act-listings -> XMLSyntaxError: no text parsed from document (line 0)
-[warn:TX] https://www.twc.texas.gov/news/warn-act-listings -> XMLSyntaxError: no text parsed from document (line 0)
-[warn:TX] NO PARSE — repair-agent attention needed
-[warn:OH] https://jfs.ohio.gov/job-services-and-unemployment/job-services/warn/current-warn-notices -> HTTPError: 404 Client Error: Not Found for url: https://jfs.ohio.gov/job-services-and-unemployment/jo
-[warn:OH] https://jfs.ohio.gov/warn/current.stm -> HTTPError: 404 Client Error: Not Found for url: https://jfs.ohio.gov/warn/current.stm
-[warn:OH] NO PARSE — repair-agent attention needed
-[warn:MI] https://www.michigan.gov/leo/bureaus-agencies/wd/warn-notices -> HTTPError: 404 Client Error: Not Found for url: https://www.michigan.gov/leo/404
-[warn:MI] https://milmi.org/warn -> ImportError: `Import beautifulsoup4` failed.  Use pip or conda to install the beautifulsoup4 package.
-[warn:MI] NO PARSE — repair-agent attention needed
-[error] zero leads parsed across all states
+=== run 34873389730 Mon Sep 14 17:13:22 UTC 2026 ===
+[substations] US-TX FAILED: 504 Server Error: Gateway Timeout for url: https://overpass-api.de/api/interpreter
+[substations] US-OH: 3132
+[substations] US-MI FAILED: 504 Server Error: Gateway Timeout for url: https://overpass-api.de/api/interpreter
+[done] 3132 substations -> /home/runner/work/wattscore/wattscore/data/substations.csv
+[warn:TX] Socrata API: 2368 rows
+[warn:TX] columns: ['notice_date', 'job_site_name', 'county_name', 'wda_name', 'total_layoff_number', 'layoff_date', 'wfdd_received_date', 'city_name']
+[warn:TX] 72 notices within 9 months
+[done] 72 scored closure leads (18 rated 70+) -> data/leads.csv; contacts in data/pro/ (gitignored)

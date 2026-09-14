@@ -1,0 +1,25 @@
+workspace at Mon Sep 14 17:13:44 UTC 2026:
+total 152
+drwxr-xr-x 4 runner runner   4096 Sep 14 17:13 .
+drwxr-xr-x 8 runner runner   4096 Sep 14 17:13 ..
+-rw-r--r-- 1 runner runner     43 Sep 14 17:13 DIAG.txt
+-rw-r--r-- 1 runner runner    709 Sep 14 17:13 last_refresh.log
+-rw-r--r-- 1 runner runner   8680 Sep 14 17:13 leads.csv
+drwxr-xr-x 2 runner runner   4096 Sep 14 17:13 pro
+-rw-r--r-- 1 runner runner 117974 Sep 14 17:13 substations.csv
+drwxr-xr-x 2 runner runner   4096 Sep 14 17:13 test_fixtures
+--- log head ---
+=== run 34873389730 Mon Sep 14 17:13:22 UTC 2026 ===
+[substations] US-TX FAILED: 504 Server Error: Gateway Timeout for url: https://overpass-api.de/api/interpreter
+[substations] US-OH: 3132
+[substations] US-MI FAILED: 504 Server Error: Gateway Timeout for url: https://overpass-api.de/api/interpreter
+[done] 3132 substations -> /home/runner/work/wattscore/wattscore/data/substations.csv
+--- log wc ---
+9 data/last_refresh.log
+--- git status ---
+ M data/last_refresh.log
+ M data/leads.csv
+ M data/substations.csv
+?? data/DIAG.txt
+--- head commit ---
+4805e8d data: first live board — 72 scored TX closure leads
