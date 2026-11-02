@@ -1,0 +1,25 @@
+workspace at Mon Nov  2 21:03:52 UTC 2026:
+total 412
+drwxr-xr-x 4 runner runner   4096 Nov  2 21:03 .
+drwxr-xr-x 8 runner runner   4096 Nov  2 21:03 ..
+-rw-r--r-- 1 runner runner     43 Nov  2 21:03 DIAG.txt
+-rw-r--r-- 1 runner runner    620 Nov  2 21:03 last_refresh.log
+-rw-r--r-- 1 runner runner   6471 Nov  2 21:03 leads.csv
+drwxr-xr-x 2 runner runner   4096 Nov  2 21:03 pro
+-rw-r--r-- 1 runner runner 387793 Nov  2 21:03 substations.csv
+drwxr-xr-x 2 runner runner   4096 Nov  2 21:01 test_fixtures
+--- log head ---
+=== run 41524540364 Mon Nov  2 21:01:53 UTC 2026 ===
+[substations] US-TX: 6199
+[substations] US-OH: 3163
+[substations] US-MI FAILED: 502 Server Error: Bad Gateway for url: https://overpass-api.de/api/interpreter
+[done] 9362 substations -> /home/runner/work/wattscore/wattscore/data/substations.csv
+--- log wc ---
+9 data/last_refresh.log
+--- git status ---
+ M data/last_refresh.log
+ M data/leads.csv
+ M data/substations.csv
+?? data/DIAG.txt
+--- head commit ---
+4805e8d data: first live board — 72 scored TX closure leads
