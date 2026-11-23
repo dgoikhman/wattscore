@@ -1,0 +1,25 @@
+workspace at Mon Nov 23 23:05:08 UTC 2026:
+total 556
+drwxr-xr-x 4 runner runner   4096 Nov 23 23:05 .
+drwxr-xr-x 8 runner runner   4096 Nov 23 23:05 ..
+-rw-r--r-- 1 runner runner     43 Nov 23 23:05 DIAG.txt
+-rw-r--r-- 1 runner runner    540 Nov 23 23:05 last_refresh.log
+-rw-r--r-- 1 runner runner   5836 Nov 23 23:05 leads.csv
+drwxr-xr-x 2 runner runner   4096 Nov 23 23:05 pro
+-rw-r--r-- 1 runner runner 532653 Nov 23 23:05 substations.csv
+drwxr-xr-x 2 runner runner   4096 Nov 23 23:01 test_fixtures
+--- log head ---
+=== run 45285139924 Mon Nov 23 23:02:04 UTC 2026 ===
+[substations] US-TX: 6207
+[substations] US-OH: 3165
+[substations] US-MI: 2901
+[done] 12273 substations -> /home/runner/work/wattscore/wattscore/data/substations.csv
+--- log wc ---
+9 data/last_refresh.log
+--- git status ---
+ M data/last_refresh.log
+ M data/leads.csv
+ M data/substations.csv
+?? data/DIAG.txt
+--- head commit ---
+4805e8d data: first live board — 72 scored TX closure leads
